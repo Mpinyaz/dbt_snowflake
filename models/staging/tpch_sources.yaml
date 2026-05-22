@@ -1,0 +1,19 @@
+sources:
+  - name: tpch
+    database: snowflake_sample_data
+    schema: tpch_sf1
+    tables:
+      - name: orders
+        columns:
+          - name: o_orderkey
+            tests:
+              - unique
+              - not_null
+      - name: lineitem
+        columns:
+          - name: l_orderkey
+            data_tests: # Updated to modern data_tests key
+              - relationships:
+                  arguments: # 💡 Nest parameters under arguments
+                    to: source('tpch','orders')
+                    field: o_orderkey
