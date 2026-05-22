@@ -1,11 +1,10 @@
-*.pub
 .user.yml
 secrets/
-.env
+.venv
 target/
 dbt_packages/
 logs/
-.venv
+.git
+.env
 *.pyc
 __pycache__
-/.user.yml

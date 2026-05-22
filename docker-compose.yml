@@ -1,0 +1,8 @@
+services:
+  dbt:
+    build: .
+    env_file: .env
+    volumes:
+      - .:/app
+      - ~/.ssh/snowflake_rsa_key.p8:/app/secrets/snowflake_rsa_key.p8:ro
+    command: uv run dbt debug
