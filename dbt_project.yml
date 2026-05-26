@@ -29,10 +29,16 @@ clean-targets: # directories to be removed by `dbt clean`
 # files using the `{{ config(...) }}` macro.
 models:
   etlpipeline:
+    raw:
+      +materialized: view
+      +snowflake_warehouse: dbt_wh
+      +tags: "raw"
     staging:
       +materialized: view
-      +snowflake_warehouse: dbt_wh # Added + here
+      +snowflake_warehouse: dbt_wh
+      +tags: "staging"
     marts:
       +materialized: table
-      +snowflake_warehouse: dbt_wh # Added + here
+      +snowflake_warehouse: dbt_wh
+      +tags: "marts"
 

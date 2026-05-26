@@ -1,34 +1,30 @@
-FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
+FROM quay.io/astronomer/astro-runtime:12.6.0
 
-# Install git
+# Install uv if you want to use it for dbt management, 
+# but for simple dbt-cosmos setup, requirements.txt is usually enough.
+# However, if the DAG expects a specific dbt path in .venv, we might need to recreate that.
+
+# The DAG says: dbt_executable_path=f"{DBT_PROJECT_PATH}/.venv/bin/dbt"
+# So we SHOULD use uv to create that .venv inside the container.
+
+USER root
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-# Set working directory
-WORKDIR /app
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-# Enable bytecode compilation
-ENV UV_COMPILE_BYTECODE=1
+USER astro
+WORKDIR /usr/local/airflow
 
-# Copy project files
+# Copy project files for uv
 COPY pyproject.toml uv.lock ./
 
-# Install dependencies
+# Install dependencies into a virtualenv that Cosmos can use
 RUN uv sync --frozen --no-dev
 
-# Place the virtual environment's bin directory on the PATH
-ENV VIRTUAL_ENV=/app/.venv
-ENV PATH="/app/.venv/bin:$PATH"
-
-# Copy the rest of the application
-COPY . .
-
-# Install dbt packages
+# Ensure dbt deps are installed
 RUN uv run dbt deps
 
 # Set environment variables for dbt
-ENV DBT_PROFILES_DIR=/app
-
-# Default command
-CMD ["uv", "run", "dbt", "run"]
+ENV DBT_PROFILES_DIR=/usr/local/airflow

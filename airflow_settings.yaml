@@ -1,0 +1,19 @@
+airflow:
+  connections:
+    - conn_id: snowflake_default
+      conn_type: snowflake
+      conn_login: YOUR_SNOWFLAKE_USERNAME
+      conn_password: YOUR_SNOWFLAKE_PASSWORD
+      conn_extra:
+        account: YOUR_SNOWFLAKE_ACCOUNT_ID
+        warehouse: dbt_wh
+        database: DBT_DB
+        region: YOUR_SNOWFLAKE_REGION
+        role: YOUR_SNOWFLAKE_ROLE
+  pools:
+    - pool_name:
+      pool_slot:
+      pool_description:
+  variables:
+    - variable_name:
+      variable_value:

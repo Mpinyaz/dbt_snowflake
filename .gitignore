@@ -9,3 +9,5 @@ logs/
 *.pyc
 __pycache__
 /.user.yml
+/profiles.yml
+/.astro

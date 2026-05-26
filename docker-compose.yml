@@ -6,3 +6,31 @@ services:
       - .:/app
       - ~/.ssh/snowflake_rsa_key.p8:/app/secrets/snowflake_rsa_key.p8:ro
     command: uv run dbt debug
+
+  db:
+    image: postgres:16-alpine
+    restart: always
+    command: postgres -c wal_level=logical
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: adminpassword
+      POSTGRES_DB: airbyte_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./include/init-postgres.sql:/docker-entrypoint-initdb.d/init-postgres.sql
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "8081:80"
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
